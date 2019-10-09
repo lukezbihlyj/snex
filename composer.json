@@ -1,0 +1,23 @@
+{
+    "name": "lukezbihlyj/snex",
+    "description": "Snex is a PHP framework powered by Symfony 4 components with lots of pre-packaged functionality.",
+    "require": {
+        "php": ">=7.0",
+
+        "symfony/cache": "~4.3",
+        "symfony/console": "~4.3",
+        "symfony/event-dispatcher": "~4.3",
+        "symfony/http-kernel": "~4.3",
+        "symfony/lock": "~4.3",
+        "symfony/process": "~4.3",
+
+        "php-di/php-di": "~6.0",
+        "filp/whoops": "~2.5",
+        "twig/twig": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Snex\\": "src/"
+        }
+    }
+}
