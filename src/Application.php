@@ -157,16 +157,24 @@ class Application
     }
 
     /**
-     * Return a single configuration element with the given key or the entire
-     * configuration object
+     * Get the current configuration container
      */
-    public function getConfig(string $key = null, $default = null)
+    public function getConfigContainer(string $key = null, $default = null) : Config
     {
         if (!is_null($key)) {
             return $this->config->get($key, $default);
         }
 
         return $this->config;
+    }
+
+    /**
+     * Return a single configuration element with the given key or the default
+     * if the key was not found
+     */
+    public function getConfig(string $key = null, $default = null)
+    {
+        return $this->config->get($key, $default);
     }
 
     /**
