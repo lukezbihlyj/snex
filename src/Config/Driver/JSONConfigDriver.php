@@ -6,12 +6,12 @@ use Snex\Config\Config;
 
 class JSONConfigDriver implements DriverInterface
 {
-    public function supportsFile($filePath) : bool
+    public function supportsFile(string $filePath) : bool
     {
         return preg_match('#\.json(\.dist)?$#', $filePath) === 1;
     }
 
-    public function loadFile($filePath) : Config
+    public function loadFile(string $filePath) : Config
     {
         $data = file_get_contents($filePath);
         $data = json_decode($data, true);

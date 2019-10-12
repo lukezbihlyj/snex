@@ -7,12 +7,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class YAMLConfigDriver implements DriverInterface
 {
-    public function supportsFile($filePath) : bool
+    public function supportsFile(string $filePath) : bool
     {
         return preg_match('#\.ya?ml(\.dist)?$#', $filePath) === 1;
     }
 
-    public function loadFile($filePath) : Config
+    public function loadFile(string $filePath) : Config
     {
         $data = Yaml::parse($filePath);
 

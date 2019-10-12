@@ -11,9 +11,8 @@
         "symfony/lock": "~4.3",
         "symfony/process": "~4.3",
 
-        "php-di/php-di": "~6.0",
         "filp/whoops": "~2.5",
-        "twig/twig": "~2.0"
+        "twig/twig": "~3.0"
     },
     "autoload": {
         "psr-4": {

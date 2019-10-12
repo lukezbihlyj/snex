@@ -5,8 +5,8 @@ namespace Snex;
 use Snex\Config\Config;
 use Snex\Config\ConfigProvider;
 use Snex\Error\ErrorHandlerProvider;
-use DI\Container as ServiceContainer;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Snex\Render\RenderEngineProvider;
+use Snex\Service\ServiceContainer;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,12 +26,7 @@ class Application
     /**
      * @var bool
      */
-    protected $debug = false;
-
-    /**
-     * @var string
-     */
-    protected $stage = 'prod';
+    protected $hasInitialized = false;
 
     /**
      * @var Config
@@ -62,9 +57,10 @@ class Application
      * Create a new instance of our application with the defined directory
      * as the root
      */
-    public function __construct(string $rootPath)
+    public function __construct(string $rootPath, string $localConfigFile)
     {
         $this->rootPath = rtrim(realpath($rootPath), '/');
+        $this->localConfigFile = $this->rootPath . $localConfigFile;
 
         return $this;
     }
@@ -81,6 +77,7 @@ class Application
 
         $this->addProvider(new ConfigProvider());
         $this->addProvider(new ErrorHandlerProvider());
+        $this->addProvider(new RenderEngineProvider());
 
         foreach ($modules as $module) {
             $moduleClass = $module . '\\Module';
@@ -96,6 +93,8 @@ class Application
 
         $this->initProviders();
         $this->initModules();
+
+        $this->hasInitialized = true;
     }
 
     /**
@@ -108,20 +107,19 @@ class Application
     }
 
     /**
-     * Get the local config file path, if set
+     * Get the application root path
      */
-    public function getLocalConfigFile() : string
+    public function getRootPath() : string
     {
-        return $this->localConfigFile;
+        return $this->rootPath;
     }
 
     /**
-     * Set the local config file path, which is used as the final override
-     * to any existing configuration flags
+     * Get the local config file path, if set
      */
-    public function setLocalConfigFile(string $localConfigFile) : void
+    public function getLocalConfigFile() : ?string
     {
-        $this->localConfigFile = $localConfigFile;
+        return $this->localConfigFile;
     }
 
     /**
@@ -129,15 +127,7 @@ class Application
      */
     public function inDebugMode() : bool
     {
-        return $this->debug;
-    }
-
-    /**
-     * Update to make sure the application is running in the right mode
-     */
-    public function setInDebugMode(bool $debug) : void
-    {
-        $this->debug = $debug;
+        return $this->config->get('debug', false);
     }
 
     /**
@@ -145,58 +135,29 @@ class Application
      */
     public function getStage() : string
     {
-        return $this->stage;
-    }
-
-    /**
-     * Update to make sure the application is running in the right stage
-     */
-    public function setStage(string $stage) : void
-    {
-        $this->stage = $stage;
+        return $this->config->get('stage', 'prod');
     }
 
     /**
      * Get the current configuration container
      */
-    public function getConfigContainer(string $key = null, $default = null) : Config
+    public function config() : Config
     {
-        if (!is_null($key)) {
-            return $this->config->get($key, $default);
-        }
-
         return $this->config;
-    }
-
-    /**
-     * Return a single configuration element with the given key or the default
-     * if the key was not found
-     */
-    public function getConfig(string $key = null, $default = null)
-    {
-        return $this->config->get($key, $default);
     }
 
     /**
      * Get the main service container
      */
-    public function getServiceContainer() : ServiceContainer
+    public function services() : ServiceContainer
     {
         return $this->serviceContainer;
     }
 
     /**
-     * Get one of the services from the service container
-     */
-    public function getService(string $serviceName) : ServiceInterface
-    {
-        return $this->serviceContainer->get($serviceName);
-    }
-
-    /**
      * Get the event dispatcher
      */
-    public function getEventDispatcher() : EventDispatcher
+    public function events() : EventDispatcher
     {
         return $this->eventDispatcher;
     }
@@ -217,6 +178,10 @@ class Application
         $provider->register($this);
 
         $this->providers[] = $provider;
+
+        if ($this->hasInitialized) {
+            $provider->init($this);
+        }
     }
 
     /**
@@ -235,6 +200,10 @@ class Application
         $module->register($this);
 
         $this->modules[] = $module;
+
+        if ($this->hasInitialized) {
+            $module->init($this);
+        }
     }
 
     /**
@@ -244,12 +213,17 @@ class Application
     {
         $request = Request::createFromGlobals();
 
+        $renderEngine = $this->services()->get('Snex\Render\Engine\TwigRenderEngine');
+        $response = new Response($renderEngine->render('test.twig', []), 200);
+
+        /*
         $response = new Response(json_encode([
             'status' => 'success',
             'config' => $this->config->all()
         ]), 200, [
             'content-type' => 'application/json'
         ]);
+        */
 
         $response->prepare($request);
         $response->send();

@@ -4,15 +4,8 @@ namespace Snex\Config;
 
 class ConfigLoader
 {
-    /**
-     * @var DriverInterface[]
-     */
     protected $drivers = [];
 
-    /**
-     * Create a new instance of the loader, and set up the supported drivers as
-     * requested by the application or the defaults
-     */
     public function __construct(array $drivers = null)
     {
         if (is_null($drivers)) {
@@ -26,14 +19,6 @@ class ConfigLoader
         }
     }
 
-    /**
-     * Load a file from disk and parse whatever format it's in. Currently supported
-     * drivers:
-     *
-     * - PHPConfigDriver
-     * - JSONConfigDriver
-     * - YAMLConfigDriver
-     */
     public function loadFile(string $filePath) : Config
     {
         foreach ($this->drivers as $driver) {

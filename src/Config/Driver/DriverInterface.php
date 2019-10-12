@@ -6,6 +6,6 @@ use Snex\Config\Config;
 
 interface DriverInterface
 {
-    public function supportsFile($filePath) : bool;
-    public function loadFile($filePath) : Config;
+    public function supportsFile(string $filePath) : bool;
+    public function loadFile(string $filePath) : Config;
 }

@@ -28,7 +28,7 @@ class ConfigProvider implements ProviderInterface
                 continue;
             }
 
-            $app->getConfig()->merge($config);
+            $app->config()->merge($config);
         }
 
         if ($app->getLocalConfigFile()) {
@@ -36,16 +36,8 @@ class ConfigProvider implements ProviderInterface
             $config = $loader->loadFile($configFile);
 
             if ($config) {
-                $app->getConfig()->merge($config);
+                $app->config()->merge($config);
             }
-        }
-
-        if ($app->getConfig('debug')) {
-            $app->setInDebugMode(true);
-        }
-
-        if ($app->getConfig('stage')) {
-            $app->setStage($app->getConfig('stage'));
         }
     }
 }

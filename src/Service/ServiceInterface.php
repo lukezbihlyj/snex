@@ -1,6 +1,6 @@
 <?php
 
-namespace Snex;
+namespace Snex\Service;
 
 interface ServiceInterface
 {
