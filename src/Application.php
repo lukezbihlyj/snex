@@ -2,11 +2,13 @@
 
 namespace Snex;
 
+use Exception;
 use Snex\Config\Config;
 use Snex\Config\ConfigProvider;
 use Snex\Error\ErrorHandlerProvider;
 use Snex\Event\EventDispatcher;
 use Snex\Render\RenderProvider;
+use Snex\Router\RouterProvider;
 use Snex\Service\ServiceContainer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,6 +83,7 @@ class Application
         $this->addProvider(new ConfigProvider());
         $this->addProvider(new ErrorHandlerProvider());
         $this->addProvider(new RenderProvider());
+        $this->addProvider(new RouterProvider());
 
         foreach ($modules as $module) {
             $moduleClass = $module . '\\Module';
@@ -216,20 +219,18 @@ class Application
     {
         $request = Request::createFromGlobals();
 
-        $renderEngine = $this->services()->get('Snex\Render\Engine\TwigRenderEngine');
+        $router = $this->services()->get('Snex\Router\Router');
+        $renderer = $this->services()->get('Snex\Render\Renderer');
 
-        $response = new Response($renderEngine->render('test.twig', []), 200, [
+        try {
+            $matchedRoute = $router->match($request);
+        } catch (Exception $e) {
+            //
+        }
+
+        $response = new Response($renderer->render('test.twig'), 200, [
             'content-type' => 'text/html; charset=utf8'
         ]);
-
-        /*
-        $response = new Response(json_encode([
-            'status' => 'success',
-            'config' => $this->config->all()
-        ]), 200, [
-            'content-type' => 'application/json'
-        ]);
-        */
 
         $response->prepare($request);
         $response->send();
