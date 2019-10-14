@@ -12,7 +12,7 @@ class ServiceContainer
         return isset($this->services[$name]);
     }
 
-    public function get(string $name) : ?ServiceInterface
+    public function get(string $name)
     {
         if (!isset($this->services[$name])) {
             return null;
@@ -31,7 +31,7 @@ class ServiceContainer
         return $this->instances[$name];
     }
 
-    public function register(string $name, $service = null) : void
+    public function register(string $name, $service = null, array $parameters = []) : void
     {
         if (isset($this->services[$name])) {
             throw new Exception\DuplicateServiceException($name);
@@ -42,33 +42,33 @@ class ServiceContainer
         }
 
         if (!($service instanceof Wrapper\WrapperInterface)) {
-            $service = $this->wrapService($service);
+            $service = $this->wrapService($service, $parameters);
         }
 
         $this->services[$name] = $service;
     }
 
-    public function registerFactory(string $name, $service = null) : void
+    public function registerFactory(string $name, $service = null, array $parameters = []) : void
     {
         if (is_null($service)) {
             $service = $name;
         }
 
-        $service = new Wrapper\FactoryWrapper($this->wrapService($service));
+        $service = new Wrapper\FactoryWrapper($this->wrapService($service, $parameters));
 
         $this->register($name, $service);
     }
 
-    protected function wrapService($service) : Wrapper\WrapperInterface
+    protected function wrapService($service, array $parameters = []) : Wrapper\WrapperInterface
     {
         if (is_string($service)) {
-            return new Wrapper\ClosureWrapper(function () use ($service) {
-                return new $service;
-            });
-        } elseif ($service instanceof ServiceInterface) {
-            $wrapped = new Wrapper\ObjectWrapper($service);
+            return new Wrapper\NewWrapper($this, $service, $parameters);
+        } elseif ($service instanceof Closure) {
+            return new Wrapper\ClosureWrapper($service);
+        } elseif (is_object($service)) {
+            return new Wrapper\ObjectWrapper($service);
         }
 
-        throw new Exception\InvalidServiceException($name);
+        throw new Exception\InvalidServiceException($service);
     }
 }

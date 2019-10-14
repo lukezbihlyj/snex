@@ -2,9 +2,6 @@
 
 namespace Snex\Service\Wrapper;
 
-use Closure;
-use Snex\Service\ServiceInterface;
-
 class FactoryWrapper implements WrapperInterface
 {
     protected $wrapped;
@@ -12,11 +9,9 @@ class FactoryWrapper implements WrapperInterface
     public function __construct(WrapperInterface $wrapped)
     {
         $this->wrapped = $wrapped;
-
-        return $this;
     }
 
-    public function __invoke() : ServiceInterface
+    public function __invoke()
     {
         return $this->wrapped();
     }

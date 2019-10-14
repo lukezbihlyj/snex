@@ -6,12 +6,18 @@ use Snex\ProviderInterface;
 use Snex\Application;
 use Snex\Config\Config;
 
-class RenderEngineProvider implements ProviderInterface
+class RenderProvider implements ProviderInterface
 {
     public function register(Application $app) : void
     {
         $config = new Config([
             'render.template_path' => null,
+            'render.template_aliases' => [],
+
+            'render.twig.environment_config' => [
+                'debug' => false,
+                'cache' => false,
+            ],
         ]);
 
         $app->config()->merge($config);

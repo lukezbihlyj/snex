@@ -5,9 +5,9 @@ namespace Snex;
 use Snex\Config\Config;
 use Snex\Config\ConfigProvider;
 use Snex\Error\ErrorHandlerProvider;
-use Snex\Render\RenderEngineProvider;
+use Snex\Event\EventDispatcher;
+use Snex\Render\RenderProvider;
 use Snex\Service\ServiceContainer;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,8 +61,6 @@ class Application
     {
         $this->rootPath = rtrim(realpath($rootPath), '/');
         $this->localConfigFile = $this->rootPath . $localConfigFile;
-
-        return $this;
     }
 
     /**
@@ -75,9 +73,14 @@ class Application
         $this->serviceContainer = new ServiceContainer();
         $this->eventDispatcher = new EventDispatcher();
 
+        $this->serviceContainer->register('Snex\Application', $this);
+        $this->serviceContainer->register('Snex\Config\Config', $this->config);
+        $this->serviceContainer->register('Snex\Service\ServiceContainer', $this->serviceContainer);
+        $this->serviceContainer->register('Snex\Event\EventDispatcher', $this->eventDispatcher);
+
         $this->addProvider(new ConfigProvider());
         $this->addProvider(new ErrorHandlerProvider());
-        $this->addProvider(new RenderEngineProvider());
+        $this->addProvider(new RenderProvider());
 
         foreach ($modules as $module) {
             $moduleClass = $module . '\\Module';
@@ -214,7 +217,10 @@ class Application
         $request = Request::createFromGlobals();
 
         $renderEngine = $this->services()->get('Snex\Render\Engine\TwigRenderEngine');
-        $response = new Response($renderEngine->render('test.twig', []), 200);
+
+        $response = new Response($renderEngine->render('test.twig', []), 200, [
+            'content-type' => 'text/html; charset=utf8'
+        ]);
 
         /*
         $response = new Response(json_encode([

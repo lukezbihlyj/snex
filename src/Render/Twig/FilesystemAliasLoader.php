@@ -2,23 +2,20 @@
 
 namespace Snex\Render\Twig;
 
-use Twig\LoaderInterface;
-use Twig\ExistsLoaderInterface;
-use Twig\Error\LoaderError;
 use Twig\Source;
+use Twig\Loader\LoaderInterface;
+use Twig\Error\LoaderError;
 
-class TwigTemplateLoader implements LoaderInterface, ExistsLoaderInterface
+class FilesystemAliasLoader implements LoaderInterface
 {
     protected $aliases = [];
 
     public function __construct(array $aliases = [])
     {
         $this->aliases = $aliases;
-
-        return $this;
     }
 
-    public function getSourceContext(string $name) : Source
+    public function getSourceContext($name) : Source
     {
         $name = (string) $name;
 
@@ -33,12 +30,7 @@ class TwigTemplateLoader implements LoaderInterface, ExistsLoaderInterface
         return new Source(file_get_contents($this->aliases[$name]), $name);
     }
 
-    public function exists(string $name) : bool
-    {
-        return isset($this->aliases[(string) $name]);
-    }
-
-    public function getCacheKey(string $name) : string
+    public function getCacheKey($name) : string
     {
         $name = (string) $name;
 
@@ -49,7 +41,7 @@ class TwigTemplateLoader implements LoaderInterface, ExistsLoaderInterface
         return $this->aliases[$name];
     }
 
-    public function isFresh(string $name, int $time) : bool
+    public function isFresh($name, $time) : bool
     {
         $name = (string) $name;
 
@@ -58,5 +50,10 @@ class TwigTemplateLoader implements LoaderInterface, ExistsLoaderInterface
         }
 
         return true;
+    }
+
+    public function exists($name) : bool
+    {
+        return isset($this->aliases[(string) $name]);
     }
 }

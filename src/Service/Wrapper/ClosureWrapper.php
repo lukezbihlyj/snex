@@ -3,7 +3,6 @@
 namespace Snex\Service\Wrapper;
 
 use Closure;
-use Snex\Service\ServiceInterface;
 
 class ClosureWrapper implements WrapperInterface
 {
@@ -12,11 +11,9 @@ class ClosureWrapper implements WrapperInterface
     public function __construct(Closure $wrapped)
     {
         $this->wrapped = $wrapped;
-
-        return $this;
     }
 
-    public function __invoke() : ServiceInterface
+    public function __invoke()
     {
         return $this->wrapped->call($this);
     }
