@@ -7,6 +7,18 @@ class ServiceContainer
     protected $services = [];
     protected $instances = [];
 
+    protected $aurowirer;
+
+    public function __construct()
+    {
+        $this->autowirer = new ServiceAutowirer($this);
+    }
+
+    public function getAutowirer() : ServiceAutowirer
+    {
+        return $this->autowirer;
+    }
+
     public function has(string $name) : bool
     {
         return isset($this->services[$name]);
@@ -57,6 +69,13 @@ class ServiceContainer
         $service = new Wrapper\FactoryWrapper($this->wrapService($service, $parameters));
 
         $this->register($name, $service);
+    }
+
+    public function registerAndGet(string $name, $service = null, array $parameters = [])
+    {
+        $this->register($name, $service, $parameters);
+
+        return $this->get($name);
     }
 
     protected function wrapService($service, array $parameters = []) : Wrapper\WrapperInterface

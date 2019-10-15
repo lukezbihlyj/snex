@@ -16,7 +16,6 @@ class Router implements ServiceInterface
     public function __construct()
     {
         $this->routeCollection = new RouteCollection();
-        $this->routeCollection->add('/bye', new Route('/bye', [], [], [], null, [], ['get']));
     }
 
     public function match(Request $request) : array
@@ -27,5 +26,25 @@ class Router implements ServiceInterface
         $matcher = new UrlMatcher($this->routeCollection, $requestContext);
 
         return $matcher->matchRequest($request);
+    }
+
+    public function addRoute(string $name, array $routeData) : void
+    {
+        list($controller, $action) = explode('::', $routeData['controller']);
+
+        $route = new Route(
+            $routeData['pattern'], [
+                'controller' => $controller,
+                'action' => $action
+            ],
+            isset($routeData['assert']) ? $routeData['assert'] : [],
+            [],
+            null,
+            null,
+            $routeData['method'],
+            null
+        );
+
+        $this->routeCollection->add($name, $route);
     }
 }

@@ -5,11 +5,6 @@ namespace Snex\Router;
 use Snex\ProviderInterface;
 use Snex\Application;
 use Snex\Config\Config;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\HttpFoundation\Request;
 
 class RouterProvider implements ProviderInterface
 {
@@ -24,6 +19,10 @@ class RouterProvider implements ProviderInterface
 
     public function init(Application $app) : void
     {
-        $app->services()->register('Snex\Router\Router');
+        $router = $app->services()->registerAndGet('Snex\Router\Router');
+
+        foreach ($app->config()->get('router.routes') as $routeName => $routeData) {
+            $router->addRoute($routeName, $routeData);
+        }
     }
 }

@@ -29,9 +29,7 @@ class RenderProvider implements ProviderInterface
             'twig'
         ]);
 
-        $app->services()->register('Snex\Render\Renderer');
-
-        $renderer = $app->services()->get('Snex\Render\Renderer');
+        $renderer = $app->services()->registerAndGet('Snex\Render\Renderer');
 
         foreach ($enabledEngines as $engineClass) {
             $app->services()->register($renderer->getClassForEngine($engineClass));
