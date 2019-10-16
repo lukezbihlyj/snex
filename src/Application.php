@@ -77,8 +77,8 @@ class Application
 
         $this->serviceContainer->register('Snex\Application', $this);
         $this->serviceContainer->register('Snex\Config\Config', $this->config);
-        $this->serviceContainer->register('Snex\Service\ServiceContainer', $this->serviceContainer);
         $this->serviceContainer->register('Snex\Event\EventDispatcher', $this->eventDispatcher);
+        $this->serviceContainer->register('Snex\Service\ServiceContainer', $this->serviceContainer);
 
         $this->addProvider(new ConfigProvider());
         $this->addProvider(new ErrorHandlerProvider());
@@ -218,8 +218,6 @@ class Application
     public function handleRequest() : void
     {
         $request = Request::createFromGlobals();
-
-        $this->serviceContainer->register('Symfony\Component\HttpFoundation\Request', $request);
 
         $router = $this->serviceContainer->get('Snex\Router\Router');
         $response = $router->execute($request);
