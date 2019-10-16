@@ -52,7 +52,10 @@ class Router implements ServiceInterface
             $autowirer = $this->app->services()->getAutowirer();
 
             $routeController = $autowirer->newAutowired($routeData['controller']);
-            $response = $autowirer->callAutowired($routeController, $routeData['action']);
+
+            $response = $autowirer->callAutowired($routeController, $routeData['action'], [
+                'request' => $request
+            ]);
         } catch (Exception $e) {
             if ($this->app->inDebugMode()) {
                 throw $e;

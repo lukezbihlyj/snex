@@ -15,12 +15,12 @@ class ServiceAutowirer
         $this->serviceContainer = $serviceContainer;
     }
 
-    public function newAutowired(string $class)
+    public function newAutowired(string $class, array $parameters = [])
     {
         $reflection = $this->getReflectionForClass($class);
 
         if ($reflection->hasMethod('__construct')) {
-            $parameters = $this->autowireMethodParameters($reflection, '__construct');
+            $parameters = $this->autowireMethodParameters($reflection, '__construct', $parameters);
 
             return $reflection->newInstanceArgs($parameters);
         }
@@ -28,7 +28,7 @@ class ServiceAutowirer
         return $reflection->newInstance();
     }
 
-    public function callAutowired(object $instance, string $method)
+    public function callAutowired(object $instance, string $method, array $parameters = [])
     {
         $reflection = $this->getReflectionForInstance($instance);
 
@@ -37,7 +37,7 @@ class ServiceAutowirer
         }
 
         $reflectionMethod = $reflection->getMethod($method);
-        $parameters = $this->autowireMethodParameters($reflection, $method);
+        $parameters = $this->autowireMethodParameters($reflection, $method, $parameters);
 
         return $reflectionMethod->invokeArgs($instance, $parameters);
     }
@@ -56,38 +56,42 @@ class ServiceAutowirer
         return $this->getReflectionForClass(get_class($instance));
     }
 
-    protected function autowireMethodParameters(ReflectionClass $reflection, string $method) : array
+    protected function autowireMethodParameters(ReflectionClass $reflection, string $method, array $parameters = []) : array
     {
-        $parameters = [];
-
+        $mappedParameters = [];
         $reflectionMethod = $reflection->getMethod($method);
         $methodParams = $reflectionMethod->getParameters();
 
         foreach ($methodParams as $parameter) {
             $parameterName = $parameter->name;
+            $parameterClass = $parameter->getClass();
 
             if (isset($parameters[$parameterName])) {
+                $mappedParameters[] = $parameters[$parameterName];
+                continue;
+            }
+
+            if ($parameterClass && isset($parameters[$parameterClass->name])) {
+                $mappedParameters[] = $parameters[$parameterClass->name];
                 continue;
             }
 
             if ($parameter->isDefaultValueAvailable()) {
-                $parameters[$parameterName] = $parameter->getDefaultValue();
+                $mappedParameters[] = $parameter->getDefaultValue();
                 continue;
             }
 
             if ($parameter->isArray()) {
-                $parameters[$parameterName] = [];
+                $mappedParameters[] = [];
                 continue;
             }
 
-            $parameterClass = $parameter->getClass();
-
             if ($parameterClass && $parameterClass->isInstantiable()) {
-                $parameters[$parameterName] = $this->serviceContainer->get($parameterClass->name);
+                $mappedParameters[] = $this->serviceContainer->get($parameterClass->name);
                 continue;
             }
         }
 
-        return $parameters;
+        return $mappedParameters;
     }
 }
