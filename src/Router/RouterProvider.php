@@ -12,6 +12,8 @@ class RouterProvider implements ProviderInterface
     {
         $config = new Config([
             'router.routes' => [],
+            'router.controller_not_found' => null,
+            'router.controller_exception' => null,
         ]);
 
         $app->config()->merge($config);

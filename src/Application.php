@@ -219,30 +219,13 @@ class Application
     {
         $request = Request::createFromGlobals();
 
-        $this->services()->register('Symfony\Component\HttpFoundation\Request', $request);
+        $this->serviceContainer->register('Symfony\Component\HttpFoundation\Request', $request);
 
-        $router = $this->services()->get('Snex\Router\Router');
-        $renderer = $this->services()->get('Snex\Render\Renderer');
+        $router = $this->serviceContainer->get('Snex\Router\Router');
+        $response = $router->execute($request);
 
-        try {
-            $matchedRoute = $router->match($request);
-        } catch (Exception $e) {
-            if ($this->inDebugMode()) {
-                throw $e;
-            }
-        }
-
-        if ($matchedRoute) {
-            $autowirer = $this->services()->getAutowirer();
-
-            $routeController = $autowirer->newAutowired($matchedRoute['controller']);
-            $response = $autowirer->callAutowired($routeController, $matchedRoute['action']);
-
-            if (!($response instanceof Response)) {
-                $response = new Response($response);
-            }
-        } else {
-            $response = new Response(null, 404);
+        if (!($response instanceof Response)) {
+            $response = new Response($response);
         }
 
         $response->prepare($request);
