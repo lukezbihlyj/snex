@@ -34,7 +34,7 @@ class Router implements ServiceInterface
         return $matcher->matchRequest($request);
     }
 
-    public function execute(Request $request)
+    public function execute(Request $request) : Response
     {
         try {
             $routeData = $this->match($request);
@@ -50,7 +50,6 @@ class Router implements ServiceInterface
 
         try {
             $autowirer = $this->app->services()->getAutowirer();
-
             $routeController = $autowirer->newAutowired($routeData['controller']);
 
             $response = $autowirer->callAutowired($routeController, $routeData['action'], [
@@ -62,6 +61,10 @@ class Router implements ServiceInterface
             }
 
             $response = new Response(null, 500);
+        }
+
+        if (!($response instanceof Response)) {
+            $response = new Response($response, isset($routeData['status_code']) ? $routeData['status_code'] : 200);
         }
 
         return $response;
@@ -94,6 +97,7 @@ class Router implements ServiceInterface
         return [
             'controller' => $controller[0],
             'action' => $controller[1],
+            'status_code' => 404,
         ];
     }
 
@@ -104,6 +108,7 @@ class Router implements ServiceInterface
         return [
             'controller' => $controller[0],
             'action' => $controller[1],
+            'status_code' => 500,
         ];
     }
 }
