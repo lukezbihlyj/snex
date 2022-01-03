@@ -62,7 +62,7 @@ class Application
     public function __construct(string $rootPath, string $localConfigFile)
     {
         $this->rootPath = rtrim(realpath($rootPath), '/');
-        $this->localConfigFile = $this->rootPath . $localConfigFile;
+        $this->localConfigFile = $this->rootPath . '/' . $localConfigFile;
     }
 
     /**

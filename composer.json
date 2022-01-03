@@ -12,7 +12,7 @@
         "symfony/process": "~4.3",
         "symfony/routing": "~4.3",
 
-        "filp/whoops": "~2.5",
+        "filp/whoops": "~2.14",
         "twig/twig": "~2.12"
     },
     "autoload": {
