@@ -4,7 +4,7 @@ namespace Snex\Config;
 
 class ConfigLoader
 {
-    protected $drivers = [];
+    protected array $drivers = [];
 
     public function __construct(array $drivers = null)
     {

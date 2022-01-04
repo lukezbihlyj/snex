@@ -8,7 +8,7 @@ use Twig\Error\LoaderError;
 
 class FilesystemAliasLoader implements LoaderInterface
 {
-    protected $aliases = [];
+    protected array $aliases = [];
 
     public function __construct(array $aliases = [])
     {

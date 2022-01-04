@@ -4,7 +4,7 @@ namespace Snex\Service\Wrapper;
 
 class FactoryWrapper implements WrapperInterface
 {
-    protected $wrapped;
+    protected WrapperInterface $wrapped;
 
     public function __construct(WrapperInterface $wrapped)
     {

@@ -3,17 +3,19 @@
 namespace Snex\Render\Engine;
 
 use Twig\Environment;
+use Twig\Loader\LoaderInterface;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use Snex\Application;
 use Snex\Service\ServiceInterface;
 use Snex\Config\Config;
 use Snex\Render\Twig\FilesystemAliasLoader;
+use Snex\Asset\Twig\AssetExtension;
 
 class TwigRenderEngine implements EngineInterface, ServiceInterface
 {
-    protected $twigLoader;
-    protected $twigEnvironment;
+    protected LoaderInterface $twigLoader;
+    protected Environment $twigEnvironment;
 
     public function __construct(Application $app, Config $config)
     {
@@ -30,6 +32,7 @@ class TwigRenderEngine implements EngineInterface, ServiceInterface
         }
 
         $this->twigEnvironment = new Environment($this->twigLoader, $environmentConfig);
+        $this->twigEnvironment->addExtension(new AssetExtension($app));
     }
 
     public function render(string $template, array $parameters = []) : string

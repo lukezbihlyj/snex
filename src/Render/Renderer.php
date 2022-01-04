@@ -8,12 +8,12 @@ use Snex\Config\Config;
 
 class Renderer implements ServiceInterface
 {
-    protected $engineClasses = [
+    protected array $engineClasses = [
         'twig' => 'Snex\Render\Engine\TwigRenderEngine',
     ];
 
-    protected $app;
-    protected $defaultEngine;
+    protected Application $app;
+    protected string $defaultEngine;
 
     public function __construct(Application $app, Config $config)
     {

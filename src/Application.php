@@ -3,6 +3,7 @@
 namespace Snex;
 
 use Exception;
+use Snex\Asset\AssetProvider;
 use Snex\Config\Config;
 use Snex\Config\ConfigProvider;
 use Snex\Error\ErrorHandlerProvider;
@@ -15,45 +16,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Application
 {
-    /**
-     * @var string
-     */
-    protected $rootPath;
-
-    /**
-     * @var string
-     */
-    protected $localConfigFile;
-
-    /**
-     * @var bool
-     */
-    protected $hasInitialized = false;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var ServiceContainer
-     */
-    protected $serviceContainer;
-
-    /**
-     * @var EventDispatcher
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var ProviderInterface[]
-     */
-    protected $providers = [];
-
-    /**
-     * @var ModuleInterface[]
-     */
-    protected $modules = [];
+    protected string $rootPath;
+    protected string $localConfigFile;
+    protected bool $hasInitialized = false;
+    protected Config $config;
+    protected ServiceContainer $serviceContainer;
+    protected EventDispatcher $eventDispatcher;
+    protected array $providers = [];
+    protected array $modules = [];
 
     /**
      * Create a new instance of our application with the defined directory
@@ -82,6 +52,7 @@ class Application
 
         $this->addProvider(new ConfigProvider());
         $this->addProvider(new ErrorHandlerProvider());
+        $this->addProvider(new AssetProvider());
         $this->addProvider(new RenderProvider());
         $this->addProvider(new RouterProvider());
 

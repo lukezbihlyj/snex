@@ -7,9 +7,9 @@ use Snex\Service\ServiceContainer;
 
 class NewWrapper implements WrapperInterface
 {
-    protected $serviceContainer;
-    protected $wrapped;
-    protected $parameters = [];
+    protected ServiceContainer $serviceContainer;
+    protected string $wrapped;
+    protected array $parameters;
 
     public function __construct(ServiceContainer $serviceContainer, string $wrapped, array $parameters = [])
     {

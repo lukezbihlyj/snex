@@ -2,6 +2,8 @@
 
 namespace Snex\Service;
 
+use Closure;
+
 class ServiceContainer
 {
     protected $services = [];

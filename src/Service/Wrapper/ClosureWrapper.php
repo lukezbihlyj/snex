@@ -6,7 +6,7 @@ use Closure;
 
 class ClosureWrapper implements WrapperInterface
 {
-    protected $wrapped;
+    protected Closure $wrapped;
 
     public function __construct(Closure $wrapped)
     {

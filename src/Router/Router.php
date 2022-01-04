@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Router implements ServiceInterface
 {
-    protected $app;
-    protected $routeCollection;
+    protected Application $app;
+    protected RouteCollection $routeCollection;
 
     public function __construct(Application $app)
     {
