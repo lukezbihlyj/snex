@@ -8,7 +8,7 @@ use JShrink\Minifier;
 
 class JShrinkFilter extends BaseFilter
 {
-    public function filterDump(AssetInterface $asset)
+    public function filterDump(AssetInterface $asset) : void
     {
         $asset->setContent(Minifier::minify($asset->getContent()));
     }
