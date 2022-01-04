@@ -9,7 +9,6 @@ use Assetic\AssetManager;
 use Assetic\FilterManager;
 use Assetic\Filter\LessphpFilter;
 use Assetic\Filter\CssMinFilter;
-use Assetic\Filter\JSqueezeFilter;
 
 class AssetProvider implements ProviderInterface
 {
@@ -30,7 +29,7 @@ class AssetProvider implements ProviderInterface
             $filterManager = new FilterManager();
             $filterManager->set('less', new LessphpFilter());
             $filterManager->set('cssmin', new CssMinFilter());
-            $filterManager->set('jsmin', new JShrinkFilter());
+            $filterManager->set('jsmin', new Filter\JShrinkFilter());
 
             $factory = new AssetFactory($app->config()->get('asset.source_path'));
             $factory->setAssetManager($assetManager);
