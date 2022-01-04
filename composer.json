@@ -13,7 +13,7 @@
         "symfony/routing": "~4.3",
 
         "filp/whoops": "~2.14",
-        "twig/twig": "~2.12"
+        "twig/twig": "~3.0"
     },
     "autoload": {
         "psr-4": {
