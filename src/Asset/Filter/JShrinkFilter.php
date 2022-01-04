@@ -2,6 +2,7 @@
 
 namespace Snex\Asset\Filter;
 
+use Assetic\Filter\BaseFilter;
 use Assetic\Contracts\Asset\AssetInterface;
 use JShrink\Minifier;
 
