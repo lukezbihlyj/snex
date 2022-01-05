@@ -17,6 +17,7 @@ class AssetProvider implements ProviderInterface
         $config = new Config([
             'asset.source_path' => null,
             'asset.target_path' => null,
+            'asset.folders' => [],
 
             'console.commands' => [
                 'Snex\Asset\Console\AssetDumpCommand'

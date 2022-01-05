@@ -63,19 +63,18 @@ class AssetDumpCommand extends ConsoleCommand
         }
 
         // Step 2: Write folders across first
-        /*
         if ($input->getOption('ignore-folders')) {
             $output->writeln('<comment>' . date('H:i:s') . '</comment> <info>Skipping folders...</info>');
         } else {
-            foreach ($app['assets.folders'] as $folder) {
+            foreach ($this->app->config()->get('asset.folders') as $folder) {
                 $source = $folder['source'];
                 $target = $folder['target'];
 
                 if (!is_dir($target)) {
                     $output->writeln('<comment>' . date('H:i:s') . '</comment> <info>[dir+]</info> ' . $this->getAbsolutePath($target));
 
-                    if (false === @mkdir($target, 0777, true)) {
-                        throw new RuntimeException('Unable to create directory ' . $target);
+                    if (@mkdir($target, 0777, true) === false) {
+                        throw new Exception\AssetCreationException('Unable to create directory ' . $target);
                     }
                 }
 
@@ -93,8 +92,8 @@ class AssetDumpCommand extends ConsoleCommand
 
                         $output->writeln('<comment>' . date('H:i:s') . '</comment> <info>[dir+]</info> ' . $this->getAbsolutePath($targetPath));
 
-                        if (false === @mkdir($targetPath, 0777, true)) {
-                            throw new RuntimeException('Unable to create directory ' . $targetPath);
+                        if (@mkdir($targetPath, 0777, true) === false) {
+                            throw new Exception\AssetCreationException('Unable to create directory ' . $targetPath);
                         }
                     } else {
                         if (is_file($targetPath) && md5_file($targetPath) == md5_file($sourcePath)) {
@@ -103,14 +102,13 @@ class AssetDumpCommand extends ConsoleCommand
 
                         $output->writeln('<comment>' . date('H:i:s') . '</comment> <info>[file+]</info> ' . $this->getAbsolutePath($targetPath));
 
-                        if (false === @file_put_contents($targetPath, file_get_contents($sourcePath))) {
-                            throw new RuntimeException('Unable to write file ' . $targetPath);
+                        if (@file_put_contents($targetPath, file_get_contents($sourcePath)) === false) {
+                            throw new Exception\AssetCreationException('Unable to write file ' . $targetPath);
                         }
                     }
                 }
             }
         }
-        */
 
         // Step 3: Write our assets to the target path
         $writer = new AssetWriter($this->app->config()->get('asset.target_path'));
