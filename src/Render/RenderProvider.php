@@ -25,9 +25,7 @@ class RenderProvider implements ProviderInterface
 
     public function init(Application $app) : void
     {
-        $enabledEngines = $app->config()->get('render.enabled_engines', [
-            'twig'
-        ]);
+        $enabledEngines = $app->config()->get('render.enabled_engines', ['twig']);
 
         $renderer = $app->services()->registerAndGet('Snex\Render\Renderer');
 

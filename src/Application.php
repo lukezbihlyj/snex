@@ -6,6 +6,7 @@ use Exception;
 use Snex\Asset\AssetProvider;
 use Snex\Config\Config;
 use Snex\Config\ConfigProvider;
+use Snex\Console\Console;
 use Snex\Error\ErrorHandlerProvider;
 use Snex\Event\EventDispatcher;
 use Snex\Render\RenderProvider;
@@ -184,6 +185,19 @@ class Application
     }
 
     /**
+     * Handle the request, automatically inferring the context of the operation
+     * depending on the environment
+     */
+    public function handle() : void
+    {
+        if (php_sapi_name() === 'cli') {
+            $this->handleConsole();
+        } else {
+            $this->handleRequest();
+        }
+    }
+
+    /**
      * Handle a HTTP request and send back a response
      */
     public function handleRequest() : void
@@ -206,6 +220,13 @@ class Application
      */
     public function handleConsole() : void
     {
+        $console = new Console($this);
+
+        foreach ($this->config->get('console.commands', []) as $command) {
+            $console->add(new $command($this, $console));
+        }
+
+        $console->run();
     }
 
     /**

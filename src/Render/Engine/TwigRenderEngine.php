@@ -39,4 +39,14 @@ class TwigRenderEngine implements EngineInterface, ServiceInterface
     {
         return $this->twigEnvironment->render($template, $parameters);
     }
+
+    public function getLoader() : LoaderInterface
+    {
+        return $this->twigLoader;
+    }
+
+    public function getEnvironment() : Environment
+    {
+        return $this->twigEnvironment;
+    }
 }
