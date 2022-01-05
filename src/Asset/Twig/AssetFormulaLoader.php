@@ -45,7 +45,7 @@ class AssetFormulaLoader implements FormulaLoaderInterface
                     'debug' => $node->getAttribute('debug'),
                     'combine' => $node->getAttribute('combine'),
                     'vars' => $node->getAttribute('vars'),
-                ],
+                ]
             ];
         } elseif ($node instanceof AsseticFilterNode) {
             $name = $node->getAttribute('name');

@@ -36,7 +36,7 @@ class AssetProvider implements ProviderInterface
             $filterManager->set('cssmin', new CssMinFilter());
             $filterManager->set('jsmin', new Filter\JShrinkFilter());
 
-            $factory = new AssetFactory($app->config()->get('asset.source_path'));
+            $factory = new AssetFactory($app);
             $factory->setAssetManager($assetManager);
             $factory->setFilterManager($filterManager);
             $factory->setDefaultOutput('misc/*');

@@ -4,7 +4,6 @@ namespace Snex\Asset\Twig;
 
 use Snex\Asset\AssetFactory;
 use Assetic\Contracts\Asset\AssetInterface;
-use Assetic\Extension\Twig\AsseticNode;
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\Token;
 use Twig\Node\Node;
@@ -156,6 +155,6 @@ class AssetTokenParser extends AbstractTokenParser
 
         $asset = $this->factory->createAsset($inputs, $filters, $attributes + ['name' => $name]);
 
-        return new AsseticNode($asset, $body, $inputs, $filters, $name, $attributes, $token->getLine(), $this->getTag());
+        return new AssetNode($this->factory, $asset, $body, $inputs, $filters, $name, $attributes, $token->getLine(), $this->getTag());
     }
 }
