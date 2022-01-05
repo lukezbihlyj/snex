@@ -2,7 +2,7 @@
     "name": "lukezbihlyj/snex",
     "description": "Snex is a PHP framework powered by Symfony 4 components with lots of pre-packaged functionality.",
     "require": {
-        "php": ">=7.0",
+        "php": ">=8.0",
 
         "symfony/cache": "~4.3",
         "symfony/console": "~4.3",
