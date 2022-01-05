@@ -1,6 +1,7 @@
 {
     "name": "lukezbihlyj/snex",
     "description": "Snex is a PHP framework powered by Symfony 4 components with lots of pre-packaged functionality.",
+    "license": "MIT",
     "require": {
         "php": ">=8.0",
 
