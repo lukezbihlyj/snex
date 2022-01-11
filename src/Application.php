@@ -42,6 +42,8 @@ class Application
      */
     public function init(array $modules = []) : void
     {
+        $app = $this;
+
         $this->config = new Config();
         $this->serviceContainer = new ServiceContainer();
         $this->eventDispatcher = new EventDispatcher();
@@ -51,7 +53,9 @@ class Application
         $this->serviceContainer->register('Snex\Event\EventDispatcher', $this->eventDispatcher);
         $this->serviceContainer->register('Snex\Service\ServiceContainer', $this->serviceContainer);
 
-        $this->serviceContainer->register('Symfony\Component\HttpFoundation\Request', function () {
+        $this->serviceContainer->register('Symfony\Component\HttpFoundation\Request', function () use ($app) {
+            Request::setTrustedProxies($app->config()->get('request.trusted_proxies', []), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PROTO);
+
             return Request::createFromGlobals();
         });
 
