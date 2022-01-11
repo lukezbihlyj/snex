@@ -44,6 +44,12 @@ class Application
     {
         $app = $this;
 
+        // We put in a small hack here to hardcode this override on the IP addresses
+        // otherwise we have a bunch of problems dealing with Symfony request headers
+        if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+            $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP'];
+        }
+
         $this->config = new Config();
         $this->serviceContainer = new ServiceContainer();
         $this->eventDispatcher = new EventDispatcher();
@@ -54,7 +60,7 @@ class Application
         $this->serviceContainer->register('Snex\Service\ServiceContainer', $this->serviceContainer);
 
         $this->serviceContainer->register('Symfony\Component\HttpFoundation\Request', function () use ($app) {
-            Request::setTrustedProxies($app->config()->get('request.trusted_proxies', []), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PROTO);
+            Request::setTrustedProxies($app->config()->get('request.trusted_proxies', []), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PROTO | Request::HEADER_X_FORWARDED_PORT);
 
             return Request::createFromGlobals();
         });
