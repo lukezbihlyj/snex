@@ -212,7 +212,7 @@ class Application
     }
 
     /**
-     * Handle a HTTP request and send back a response
+     * Handle an HTTP request and send back a response
      */
     public function handleRequest() : void
     {
